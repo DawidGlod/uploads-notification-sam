@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Lambda for image-app-UploadsNotificationFunction
+Resources:
+  UploadsNotificationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: image-app-UploadsNotificationFunction
+      Runtime: python3.12
+      Handler: lambda_function.lambda_handler
+      CodeUri: s3://dawidglod-static-site/95f92e9a9cd0edeeae8ccaa52af07aed
+      Timeout: 30
+      MemorySize: 128
+      Environment:
+        Variables:
+          SNS_TOPIC_ARN: arn:aws:sns:us-east-2:967824770072:image-app-UploadsNotificationTopic
+          SQS_QUEUE_URL: https://sqs.us-east-2.amazonaws.com/967824770072/image-app-UploadsNotificationQueue
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - sns:Publish
+          - sqs:ReceiveMessage
+          - sqs:DeleteMessage
+          - sqs:GetQueueAttributes
+          Resource:
+          - arn:aws:sns:us-east-2:967824770072:image-app-UploadsNotificationTopic
+          - arn:aws:sqs:us-east-2:967824770072:image-app-UploadsNotificationQueue
+      Events:
+        SQSTrigger:
+          Type: SQS
+          Properties:
+            Queue: arn:aws:sqs:us-east-2:967824770072:image-app-UploadsNotificationQueue
+            BatchSize: 1
+    Metadata:
+      SamResourceId: UploadsNotificationFunction

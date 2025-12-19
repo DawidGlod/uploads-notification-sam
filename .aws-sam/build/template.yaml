@@ -1,0 +1,22 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Lambda function for image upload notifications
+Resources:
+  UploadsNotificationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: uploads-notification-function
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.9
+      CodeUri: UploadsNotificationFunction
+      Environment:
+        Variables:
+          SNS_TOPIC_ARN: arn:aws:sns:us-east-2:967824770072:image-app-UploadsNotificationTopic
+      Policies:
+      - SNSPublishMessagePolicy:
+          TopicName: image-app-UploadsNotificationTopic
+      - SQSSendMessagePolicy:
+          QueueName: image-app-UploadsNotificationQueue
+      - CloudWatchLogsFullAccess
+    Metadata:
+      SamResourceId: UploadsNotificationFunction
