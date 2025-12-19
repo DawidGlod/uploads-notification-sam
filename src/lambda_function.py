@@ -26,6 +26,7 @@ def lambda_handler(event, context):
                 )
                 processed_count += 1
                 print(f"Wysłano notyfikację do SNS dla pliku: {key}")
+                print("nowa zmiana")
             except Exception as exc:
                 print(f"Błąd wysyłania powiadomienia do SNS: {exc}")
         else:
